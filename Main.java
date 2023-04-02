@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 import java.util.Date;
 import javax.swing.JComboBox;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 public class Main {
@@ -29,9 +30,9 @@ public class Main {
                     String descricao = JOptionPane.showInputDialog("Digite a descrição do classificado:");
                     double preco = Double.parseDouble(JOptionPane.showInputDialog("Digite o preço do classificado:"));
                     String contato = JOptionPane.showInputDialog("Digite as informações de contato do classificado:");
-                    LocalDate dataInicio = LocalDate.parse(JOptionPane.showInputDialog("Digite a Data de Inicio da Exibição (no formato YYYY-MM-DD)"));
-                    LocalDate dataTermino = LocalDate.parse(JOptionPane.showInputDialog("Digite a Data de Inicio da Exibição (no formato YYYY-MM-DD)"));
-
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate dataInicio = LocalDate.parse(JOptionPane.showInputDialog("Digite a Data de Inicio da Exibição (no formato dd/MM/yyyy)"), formatter);
+                    LocalDate dataTermino = LocalDate.parse(JOptionPane.showInputDialog("Digite a Data de Término da Exibição (no formato dd/MM/yyyy)"), formatter);
                     String[] opcoesCategoria = {"VENDA", "ALUGUEL", "COMPRA", "SERVIÇO", "OUTRO", "EMPREGO"};
                     JComboBox<String> comboBoxCategoria = new JComboBox<>(opcoesCategoria);
                     comboBoxCategoria.setSelectedIndex(0); // seleciona a primeira opção por padrão

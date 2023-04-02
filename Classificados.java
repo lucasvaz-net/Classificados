@@ -24,6 +24,13 @@ public class Classificados {
         this.dataTermino = dataTermino;
     }
 
+    @Override
+    public String toString() {
+        return titulo + "," + descricao + "," + preco + "," + dataPublicacao + "," + contato + "," + categoria + "," + status + "," + dataInicio + "," + dataTermino;
+    }
+
+
+
     // getters e setters
 
     public String getTitulo() {
