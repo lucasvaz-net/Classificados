@@ -5,14 +5,14 @@ public class Classificados {
     private String titulo;
     private String descricao;
     private double preco;
-    private Date dataPublicacao;
+    private LocalDate dataPublicacao;
     private String contato;
     private String categoria;
     private boolean status;
     private LocalDate dataInicio;
     private LocalDate dataTermino;
 
-    public Classificados(String titulo, String descricao, double preco, Date dataPublicacao, String contato, String categoria, boolean status, LocalDate dataInicio, LocalDate dataTermino) {
+    public Classificados(String titulo, String descricao, double preco, LocalDate dataPublicacao, String contato, String categoria, boolean status, LocalDate dataInicio, LocalDate dataTermino) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.preco = preco;
@@ -57,11 +57,11 @@ public class Classificados {
         this.preco = preco;
     }
 
-    public Date getDataPublicacao() {
+    public LocalDate getDataPublicacao() {
         return dataPublicacao;
     }
 
-    public void setDataPublicacao(Date dataPublicacao) {
+    public void setDataPublicacao(LocalDate dataPublicacao) {
         this.dataPublicacao = dataPublicacao;
     }
 

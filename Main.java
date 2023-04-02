@@ -7,11 +7,39 @@ import java.util.Date;
 import javax.swing.JComboBox;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.io.BufferedReader;
+import java.text.SimpleDateFormat;
+import java.io.FileReader;
+import java.text.ParseException;
+
 
 
 public class Main {
     public static void main(String[] args) {
         ArrayList<Classificados> listaClassificados = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("classificados.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] fields = line.split(",");
+                String titulo = fields[0];
+                String descricao = fields[1];
+                double preco = Double.parseDouble(fields[2]);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate dataPublicacao = LocalDate.parse(fields[3], DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String contato = fields[4];
+                String categoria = fields[5];
+                boolean status = Boolean.parseBoolean(fields[6]);
+                LocalDate dataInicio = LocalDate.parse(fields[7], DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                LocalDate dataTermino = LocalDate.parse(fields[8], DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                Classificados classificado = new Classificados(titulo, descricao, preco, dataPublicacao, contato, categoria, status, dataInicio, dataTermino);
+                listaClassificados.add(classificado);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+
         int opcao;
         do {
             opcao = Integer.parseInt(JOptionPane.showInputDialog("""
@@ -27,6 +55,7 @@ public class Main {
             switch (opcao) {
                 case 1:
                     String titulo = JOptionPane.showInputDialog("Digite o título do classificado:");
+
                     String descricao = JOptionPane.showInputDialog("Digite a descrição do classificado:");
                     double preco = Double.parseDouble(JOptionPane.showInputDialog("Digite o preço do classificado:"));
                     String contato = JOptionPane.showInputDialog("Digite as informações de contato do classificado:");
@@ -43,8 +72,9 @@ public class Main {
 
                         boolean status = true;
 
+                        LocalDate dataPublicacao = LocalDate.now();
 
-                        Classificados novoClassificado = new Classificados(titulo, descricao, preco, new Date(), contato, categoria, status, dataInicio, dataTermino);
+                        Classificados novoClassificado = new Classificados(titulo, descricao, preco, dataPublicacao, contato, categoria, status, dataInicio, dataTermino);
                         listaClassificados.add(novoClassificado);
                         JOptionPane.showMessageDialog(null, "Classificado inserido com sucesso!");
                         break;
@@ -90,7 +120,7 @@ public class Main {
                     break;
 
                 case 5:
-                    JOptionPane.showMessageDialog(null, "Programa adherence!");
+                    JOptionPane.showMessageDialog(null, "Programa Encerrado - Tchau!!!!");
                     break;
 
                 default:
