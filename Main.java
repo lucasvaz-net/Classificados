@@ -3,14 +3,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import java.util.Date;
 import javax.swing.JComboBox;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.io.BufferedReader;
-import java.text.SimpleDateFormat;
 import java.io.FileReader;
-import java.text.ParseException;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
+import java.awt.Dimension;
+
+
+
+
 
 
 
@@ -90,24 +94,39 @@ public class Main {
                     break;
 
                 case 3:
-                    StringBuilder sb = new StringBuilder();
+                    JTextArea textArea = new JTextArea();
+                    textArea.setEditable(false);
                     for (int i = 0; i < listaClassificados.size(); i++) {
                         Classificados classificadoAtual = listaClassificados.get(i);
-                        sb.append("Índice: ").append(i).append("\n");
-                        sb.append("Título: ").append(classificadoAtual.getTitulo()).append("\n");
-                        sb.append("Descrição: ").append(classificadoAtual.getDescricao()).append("\n");
-                        sb.append("Preço: ").append(classificadoAtual.getPreco()).append("\n");
-                        sb.append("Data de publicação: ").append(classificadoAtual.getDataPublicacao()).append("\n");
-                        sb.append("Contato: ").append(classificadoAtual.getContato()).append("\n");
-                        sb.append("Categoria: ").append(classificadoAtual.getCategoria()).append("\n");
-                        sb.append("Status: ").append(classificadoAtual.isStatus() ? "Ativo" : "Inativo").append("\n");
-                        sb.append("Data de início: ").append(classificadoAtual.getDataInicio()).append("\n");
-                        sb.append("Data de término: ").append(classificadoAtual.getDataTermino()).append("\n\n");
+                        textArea.append("Índice: " + i + "\n");
+                        textArea.append("Título: " + classificadoAtual.getTitulo() + "\n");
+                        textArea.append("Descrição: " + classificadoAtual.getDescricao() + "\n");
+                        textArea.append("Preço: " + classificadoAtual.getPreco() + "\n");
+                        textArea.append("Data de publicação: " + classificadoAtual.getDataPublicacao() + "\n");
+                        textArea.append("Contato: " + classificadoAtual.getContato() + "\n");
+                        textArea.append("Categoria: " + classificadoAtual.getCategoria() + "\n");
+                        textArea.append("Status: " + (classificadoAtual.isStatus() ? "Ativo" : "Inativo") + "\n");
+                        textArea.append("Data de início: " + classificadoAtual.getDataInicio() + "\n");
+                        textArea.append("Data de término: " + classificadoAtual.getDataTermino() + "\n\n");
                     }
-                    JOptionPane.showMessageDialog(null, sb.toString());
+                    JScrollPane scrollPane = new JScrollPane(textArea);
+                    scrollPane.setPreferredSize(new Dimension(800, 600));
+                    JOptionPane.showMessageDialog(null, scrollPane);
                     break;
 
+
                 case 4:
+                    int opcao2;
+                    do {
+                        opcao2 = Integer.parseInt(JOptionPane.showInputDialog("""
+                    Como deseja Salvar seu arquivo?
+                    1 - TXT
+                    2 - CSV
+                    3- VOLTAR
+                    """));
+
+                        switch (opcao2) {
+                            case 1:
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter("classificados.txt"))) {
                         for (Classificados classificado : listaClassificados) {
                             writer.write(classificado.toString());
@@ -118,9 +137,26 @@ public class Main {
                         JOptionPane.showMessageDialog(null, "Erro ao salvar os classificados!");
                     }
                     break;
+                            case 2:
+                            try (BufferedWriter writer = new BufferedWriter(new FileWriter("classificados.csv"))) {
+                                for (Classificados classificado : listaClassificados) {
+                                    writer.write(classificado.toString());
+                                    writer.newLine();
+                                }
+                                JOptionPane.showMessageDialog(null, "Classificados salvos com sucesso!");
+                            } catch (IOException ex) {
+                                JOptionPane.showMessageDialog(null, "Erro ao salvar os classificados!");
+                            }
+                            break;
+                            case 3:
+
+                                break;
+
+                        }break;
+                    } while (opcao != 3);
 
                 case 5:
-                    JOptionPane.showMessageDialog(null, "Programa Encerrado - Tchau!!!!");
+
                     break;
 
                 default:
