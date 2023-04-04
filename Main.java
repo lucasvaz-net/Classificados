@@ -8,9 +8,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import java.awt.Dimension;
+import javax.swing.JEditorPane;
+
 
 
 
@@ -51,8 +52,9 @@ public class Main {
                     1 - Inserir um classificado
                     2 - Remover um classificado
                     3 - Imprimir todos os classificados
-                    4 - Salvar os classificados em um arquivo txt
-                    5 - Sair
+                    4 - Salvar os classificados
+                    5 - Relatorios
+                    6 - Sair
                     """));
 
 
@@ -94,24 +96,36 @@ public class Main {
                     break;
 
                 case 3:
-                    JTextArea textArea = new JTextArea();
-                    textArea.setEditable(false);
+                    JEditorPane editorPane = new JEditorPane();
+                    editorPane.setEditable(false);
+                    editorPane.setContentType("text/html");
+
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("<html>");
+
                     for (int i = 0; i < listaClassificados.size(); i++) {
                         Classificados classificadoAtual = listaClassificados.get(i);
-                        textArea.append("Índice: " + i + "\n");
-                        textArea.append("Título: " + classificadoAtual.getTitulo() + "\n");
-                        textArea.append("Descrição: " + classificadoAtual.getDescricao() + "\n");
-                        textArea.append("Preço: " + classificadoAtual.getPreco() + "\n");
-                        textArea.append("Data de publicação: " + classificadoAtual.getDataPublicacao() + "\n");
-                        textArea.append("Contato: " + classificadoAtual.getContato() + "\n");
-                        textArea.append("Categoria: " + classificadoAtual.getCategoria() + "\n");
-                        textArea.append("Status: " + (classificadoAtual.isStatus() ? "Ativo" : "Inativo") + "\n");
-                        textArea.append("Data de início: " + classificadoAtual.getDataInicio() + "\n");
-                        textArea.append("Data de término: " + classificadoAtual.getDataTermino() + "\n\n");
+
+                        sb.append("<h2>Índice: " + i + "</h2>");
+                        sb.append("<b>Título:</b> " + classificadoAtual.getTitulo() + "<br>");
+                        sb.append("<b>Descrição:</b> " + classificadoAtual.getDescricao() + "<br>");
+                        sb.append("<b>Preço:</b> " + classificadoAtual.getPreco() + "<br>");
+                        sb.append("<b>Data de publicação:</b> " + classificadoAtual.getDataPublicacao() + "<br>");
+                        sb.append("<b>Contato:</b> " + classificadoAtual.getContato() + "<br>");
+                        sb.append("<b>Categoria:</b> " + classificadoAtual.getCategoria() + "<br>");
+                        sb.append("<b>Status:</b> " + (classificadoAtual.isStatus() ? "Ativo" : "Inativo") + "<br>");
+                        sb.append("<b>Data de início:</b> " + classificadoAtual.getDataInicio() + "<br>");
+                        sb.append("<b>Data de término:</b> " + classificadoAtual.getDataTermino() + "<br><br>");
                     }
-                    JScrollPane scrollPane = new JScrollPane(textArea);
+
+                    sb.append("</html>");
+                    editorPane.setText(sb.toString());
+
+                    JScrollPane scrollPane = new JScrollPane(editorPane);
                     scrollPane.setPreferredSize(new Dimension(800, 600));
                     JOptionPane.showMessageDialog(null, scrollPane);
+
+
                     break;
 
 
@@ -156,6 +170,9 @@ public class Main {
                     } while (opcao != 3);
 
                 case 5:
+                   
+                    break;
+                case 6:
 
                     break;
 
@@ -163,6 +180,6 @@ public class Main {
                     JOptionPane.showMessageDialog(null, "Opção inválida!");
                     break;
             }
-        } while (opcao != 5);
+        } while (opcao != 6);
     }
 }
