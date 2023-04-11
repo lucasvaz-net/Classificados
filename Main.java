@@ -11,6 +11,7 @@ import java.io.FileReader;
 import javax.swing.JScrollPane;
 import java.awt.Dimension;
 import javax.swing.JEditorPane;
+import java.time.temporal.ChronoUnit;
 
 
 
@@ -68,7 +69,7 @@ public class Main {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                     LocalDate dataInicio = LocalDate.parse(JOptionPane.showInputDialog("Digite a Data de Inicio da Exibição (no formato dd/MM/yyyy)"), formatter);
                     LocalDate dataTermino = LocalDate.parse(JOptionPane.showInputDialog("Digite a Data de Término da Exibição (no formato dd/MM/yyyy)"), formatter);
-                    String[] opcoesCategoria = {"VENDA", "ALUGUEL", "COMPRA", "SERVIÇO", "OUTRO", "EMPREGO"};
+                    String[] opcoesCategoria = {"VENDA", "ALUGUEL", "COMPRA", "SERVIÇO", "OUTRO", "EMPREGO","EVENTO"};
                     JComboBox<String> comboBoxCategoria = new JComboBox<>(opcoesCategoria);
                     comboBoxCategoria.setSelectedIndex(0); // seleciona a primeira opção por padrão
                     int resposta = JOptionPane.showConfirmDialog(null, comboBoxCategoria, "Selecione a categoria do classificado", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -113,7 +114,7 @@ public class Main {
                         sb.append("<b>Data de publicação:</b> " + classificadoAtual.getDataPublicacao() + "<br>");
                         sb.append("<b>Contato:</b> " + classificadoAtual.getContato() + "<br>");
                         sb.append("<b>Categoria:</b> " + classificadoAtual.getCategoria() + "<br>");
-                        sb.append("<b>Status:</b> " + (classificadoAtual.isStatus() ? "Ativo" : "Inativo") + "<br>");
+                        sb.append("<b>Status:</b> ").append(classificadoAtual.isStatus() ? "Ativo" : "Inativo").append("<br>");
                         sb.append("<b>Data de início:</b> " + classificadoAtual.getDataInicio() + "<br>");
                         sb.append("<b>Data de término:</b> " + classificadoAtual.getDataTermino() + "<br><br>");
                     }
@@ -170,7 +171,57 @@ public class Main {
                     } while (opcao != 3);
 
                 case 5:
-                   
+                    Classificados classificadoMaisCaro = null;
+                    double maxPreco = Double.MIN_VALUE;
+
+                    for (Classificados classificado : listaClassificados) {
+                        if (classificado.getPreco() > maxPreco) {
+                            maxPreco = classificado.getPreco();
+                            classificadoMaisCaro = classificado;
+                        }
+                    }
+                    Classificados classificadoMaisDuradouro = null;
+                    long maxDuracao = 0;
+
+                    for (Classificados classificado : listaClassificados) {
+                        LocalDate DataInicio = classificado.getDataInicio();
+                        LocalDate DataTermino = classificado.getDataTermino();
+                        long duracao = ChronoUnit.DAYS.between(DataInicio, DataTermino);
+
+                        if (duracao > maxDuracao) {
+                            maxDuracao = duracao;
+                            classificadoMaisDuradouro = classificado;
+                        }
+                    }
+                    String mensagem = "<html><font size='+1'><b>O classificado mais caro é:</b></font><br><br>"
+                            + "<b>Título:</b> " + classificadoMaisCaro.getTitulo() + "<br>"
+                            + "<b>Descrição:</b> " + classificadoMaisCaro.getDescricao() + "<br>"
+                            + "<b>Preço:</b> R$ " + classificadoMaisCaro.getPreco() + "<br>"
+                            + "<b>Data de publicação:</b> " + classificadoMaisCaro.getDataPublicacao() + "<br>"
+                            + "<b>Contato:</b> " + classificadoMaisCaro.getContato() + "<br>"
+                            + "<b>Categoria:</b> " + classificadoMaisCaro.getCategoria() + "<br>"
+                            + "<b>Status:</b> " + (classificadoMaisCaro.isStatus() ? "Ativo" : "Inativo") + "<br>"
+                            + "<b>Data de início:</b> " + classificadoMaisCaro.getDataInicio() + "<br>"
+                            + "<b>Data de término:</b> " + classificadoMaisCaro.getDataTermino() + "<br></html>"
+                            +"<html><font size='+1'><b>O classificado mais duradouro é:</b></font><br><br>"
+                            + "<b>Título:</b> " + classificadoMaisDuradouro.getTitulo() + "<br>"
+                            + "<b>Descrição:</b> " + classificadoMaisDuradouro.getDescricao() + "<br>"
+                            + "<b>Preço:</b> R$ " + classificadoMaisDuradouro.getPreco() + "<br>"
+                            + "<b>Data de publicação:</b> " + classificadoMaisDuradouro.getDataPublicacao() + "<br>"
+                            + "<b>Contato:</b> " + classificadoMaisDuradouro.getContato() + "<br>"
+                            + "<b>Categoria:</b> " + classificadoMaisDuradouro.getCategoria() + "<br>"
+                            + "<b>Status:</b> " + (classificadoMaisDuradouro.isStatus() ? "Ativo" : "Inativo") + "<br>"
+                            + "<b>Data de início:</b> " + classificadoMaisDuradouro.getDataInicio() + "<br>"
+                            + "<b>Data de término:</b> " + classificadoMaisDuradouro.getDataTermino() + "<br>"
+                            + "<b>Duração:</b> " + maxDuracao + " dias</html>";
+
+
+
+
+
+                    JOptionPane.showMessageDialog(null, mensagem);
+
+
                     break;
                 case 6:
 
