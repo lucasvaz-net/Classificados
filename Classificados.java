@@ -1,5 +1,4 @@
 import java.time.LocalDate;
-import java.util.Date;
 
 public class Classificados {
     private String titulo;
@@ -104,4 +103,10 @@ public class Classificados {
     public void setDataTermino(LocalDate dataTermino) {
         this.dataTermino = dataTermino;
     }
+
+
+
+
+
+
 }
