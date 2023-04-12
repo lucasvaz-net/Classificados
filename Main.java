@@ -12,11 +12,9 @@ import javax.swing.JScrollPane;
 import java.awt.Dimension;
 import javax.swing.JEditorPane;
 import java.time.temporal.ChronoUnit;
-
-
-
-
-
+import java.util.HashMap;
+import java.util.Map;
+import java.time.Month;
 
 
 
@@ -69,7 +67,7 @@ public class Main {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                     LocalDate dataInicio = LocalDate.parse(JOptionPane.showInputDialog("Digite a Data de Inicio da Exibição (no formato dd/MM/yyyy)"), formatter);
                     LocalDate dataTermino = LocalDate.parse(JOptionPane.showInputDialog("Digite a Data de Término da Exibição (no formato dd/MM/yyyy)"), formatter);
-                    String[] opcoesCategoria = {"VENDA", "ALUGUEL", "COMPRA", "SERVIÇO", "OUTRO", "EMPREGO","EVENTO"};
+                    String[] opcoesCategoria = {"VENDA", "ALUGUEL", "COMPRA", "SERVIÇO", "OUTRO", "EMPREGO", "EVENTO"};
                     JComboBox<String> comboBoxCategoria = new JComboBox<>(opcoesCategoria);
                     comboBoxCategoria.setSelectedIndex(0); // seleciona a primeira opção por padrão
                     int resposta = JOptionPane.showConfirmDialog(null, comboBoxCategoria, "Selecione a categoria do classificado", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -134,41 +132,43 @@ public class Main {
                     int opcao2;
                     do {
                         opcao2 = Integer.parseInt(JOptionPane.showInputDialog("""
-                    Como deseja Salvar seu arquivo?
-                    1 - TXT
-                    2 - CSV
-                    3- VOLTAR
-                    """));
+                                Como deseja Salvar seu arquivo?
+                                1 - TXT
+                                2 - CSV
+                                3- VOLTAR
+                                """));
 
                         switch (opcao2) {
                             case 1:
-                    try (BufferedWriter writer = new BufferedWriter(new FileWriter("classificados.txt"))) {
-                        for (Classificados classificado : listaClassificados) {
-                            writer.write(classificado.toString());
-                            writer.newLine();
-                        }
-                        JOptionPane.showMessageDialog(null, "Classificados salvos com sucesso!");
-                    } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(null, "Erro ao salvar os classificados!");
-                    }
-                    break;
-                            case 2:
-                            try (BufferedWriter writer = new BufferedWriter(new FileWriter("classificados.csv"))) {
-                                for (Classificados classificado : listaClassificados) {
-                                    writer.write(classificado.toString());
-                                    writer.newLine();
+                                try (BufferedWriter writer = new BufferedWriter(new FileWriter("classificados.txt"))) {
+                                    for (Classificados classificado : listaClassificados) {
+                                        writer.write(classificado.toString());
+                                        writer.newLine();
+                                    }
+                                    JOptionPane.showMessageDialog(null, "Classificados salvos com sucesso!");
+                                } catch (IOException ex) {
+                                    JOptionPane.showMessageDialog(null, "Erro ao salvar os classificados!");
                                 }
-                                JOptionPane.showMessageDialog(null, "Classificados salvos com sucesso!");
-                            } catch (IOException ex) {
-                                JOptionPane.showMessageDialog(null, "Erro ao salvar os classificados!");
-                            }
-                            break;
+                                break;
+                            case 2:
+                                try (BufferedWriter writer = new BufferedWriter(new FileWriter("classificados.csv"))) {
+                                    for (Classificados classificado : listaClassificados) {
+                                        writer.write(classificado.toString());
+                                        writer.newLine();
+                                    }
+                                    JOptionPane.showMessageDialog(null, "Classificados salvos com sucesso!");
+                                } catch (IOException ex) {
+                                    JOptionPane.showMessageDialog(null, "Erro ao salvar os classificados!");
+                                }
+                                break;
                             case 3:
 
                                 break;
 
-                        }break;
+                        }
+                        break;
                     } while (opcao != 3);
+                    continue;
 
                 case 5:
                     Classificados classificadoMaisCaro = null;
@@ -193,6 +193,64 @@ public class Main {
                             classificadoMaisDuradouro = classificado;
                         }
                     }
+
+                    HashMap<String, Integer> contagemCategorias = new HashMap<>();
+
+                // Itere sobre a lista de classificados e atualize as contagens de categoria
+                    for (Classificados classificado : listaClassificados) {
+                        String categoria = classificado.getCategoria();
+                        if (contagemCategorias.containsKey(categoria)) {
+                            contagemCategorias.put(categoria, contagemCategorias.get(categoria) + 1);
+                        } else {
+                            contagemCategorias.put(categoria, 1);
+                        }
+                    }
+
+                // Encontre a categoria com a contagem mais alta
+                    int maxContagem = 0;
+                    String categoriaMaisPublicada = "";
+                    for (Map.Entry<String, Integer> entry : contagemCategorias.entrySet()) {
+                        String categoria = entry.getKey();
+                        int contagem = entry.getValue();
+                        if (contagem > maxContagem) {
+                            maxContagem = contagem;
+                            categoriaMaisPublicada = categoria;
+                        }
+                    }
+
+                    // Cria o Map para armazenar o número de publicações por mês
+                    Map<Month, Integer> publicacoesPorMes = new HashMap<>();
+
+// Itera sobre a lista de classificados
+                    for (Classificados classificado : listaClassificados) {
+                        // Obtém o mês do classificado
+                        Month mes = classificado.getDataPublicacao().getMonth();
+
+                        // Incrementa o valor correspondente ao mês no Map
+                        if (publicacoesPorMes.containsKey(mes)) {
+                            publicacoesPorMes.put(mes, publicacoesPorMes.get(mes) + 1);
+                        } else {
+                            publicacoesPorMes.put(mes, 1);
+                        }
+                    }
+
+                    // Calcula o total de publicações e o número de meses
+                    int totalPublicacoes = publicacoesPorMes.values().stream().reduce(0, Integer::sum);
+                    int numMeses = publicacoesPorMes.size();
+
+                    // Calcula a média aritmética
+                    double media = (double) totalPublicacoes / numMeses;
+
+                    Classificados classificadoMaisBarato = null;
+                    double minPreco = Double.MAX_VALUE;
+
+                    for (Classificados classificado : listaClassificados) {
+                        if (classificado.getPreco() < minPreco) {
+                            minPreco = classificado.getPreco();
+                            classificadoMaisBarato = classificado;
+                        }
+                    }
+
                     String mensagem = "<html><font size='+1'><b>O classificado mais caro é:</b></font><br><br>"
                             + "<b>Título:</b> " + classificadoMaisCaro.getTitulo() + "<br>"
                             + "<b>Descrição:</b> " + classificadoMaisCaro.getDescricao() + "<br>"
@@ -202,8 +260,18 @@ public class Main {
                             + "<b>Categoria:</b> " + classificadoMaisCaro.getCategoria() + "<br>"
                             + "<b>Status:</b> " + (classificadoMaisCaro.isStatus() ? "Ativo" : "Inativo") + "<br>"
                             + "<b>Data de início:</b> " + classificadoMaisCaro.getDataInicio() + "<br>"
-                            + "<b>Data de término:</b> " + classificadoMaisCaro.getDataTermino() + "<br></html>"
-                            +"<html><font size='+1'><b>O classificado mais duradouro é:</b></font><br><br>"
+                            + "<b>Data de término:</b> " + classificadoMaisCaro.getDataTermino() + "<br><br>"
+                            + "<font size='+1'><b>O classificado mais Barato é:</b></font><br><br>"
+                            + "<b>Título:</b> " + classificadoMaisBarato.getTitulo() + "<br>"
+                            + "<b>Descrição:</b> " + classificadoMaisBarato.getDescricao() + "<br>"
+                            + "<b>Preço:</b> R$ " + classificadoMaisBarato.getPreco() + "<br>"
+                            + "<b>Data de publicação:</b> " + classificadoMaisBarato.getDataPublicacao() + "<br>"
+                            + "<b>Contato:</b> " + classificadoMaisBarato.getContato() + "<br>"
+                            + "<b>Categoria:</b> " + classificadoMaisBarato.getCategoria() + "<br>"
+                            + "<b>Status:</b> " + (classificadoMaisBarato.isStatus() ? "Ativo" : "Inativo") + "<br>"
+                            + "<b>Data de início:</b> " + classificadoMaisBarato.getDataInicio() + "<br>"
+                            + "<b>Data de término:</b> " + classificadoMaisBarato.getDataTermino() + "<br><br>"
+                            + "<font size='+1'><b>O classificado mais duradouro é:</b></font><br><br>"
                             + "<b>Título:</b> " + classificadoMaisDuradouro.getTitulo() + "<br>"
                             + "<b>Descrição:</b> " + classificadoMaisDuradouro.getDescricao() + "<br>"
                             + "<b>Preço:</b> R$ " + classificadoMaisDuradouro.getPreco() + "<br>"
@@ -213,13 +281,28 @@ public class Main {
                             + "<b>Status:</b> " + (classificadoMaisDuradouro.isStatus() ? "Ativo" : "Inativo") + "<br>"
                             + "<b>Data de início:</b> " + classificadoMaisDuradouro.getDataInicio() + "<br>"
                             + "<b>Data de término:</b> " + classificadoMaisDuradouro.getDataTermino() + "<br>"
-                            + "<b>Duração:</b> " + maxDuracao + " dias</html>";
+                            + "<b>Duração:</b> " + maxDuracao + " dias<br><br>"
+                            + "<font size='+1'><b>A categoria mais publicada é: </b></font><br><br>"
+                            + categoriaMaisPublicada + "<br><br>"
+                            + "<font size='+1'><b>A média de publicações por mês é: </b></font><br><br>"
+                            + media + "</html>";
+                    JEditorPane editorPane2 = new JEditorPane();
+                    editorPane2.setEditable(false);
+                    editorPane2.setContentType("text/html");
 
+                    StringBuilder sb2 = new StringBuilder();
+                    sb2.append("<html>");
 
+                    sb2.append(mensagem);
 
+                    sb2.append("</html>");
+                    editorPane2.setText(sb2.toString());
 
+                    JScrollPane scrollPane2 = new JScrollPane(editorPane2);
+                    scrollPane2.setPreferredSize(new Dimension(800, 600));
 
-                    JOptionPane.showMessageDialog(null, mensagem);
+                    JOptionPane.showMessageDialog(null, scrollPane2);
+
 
 
                     break;
